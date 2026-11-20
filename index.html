@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12223a">
+  <meta name="description" content="Explore how packed muffler geometry and tuned side branches might change an exhaust spectrum. Browser-local engineering scenario tool.">
+  <title>Exhaust Spectrum Studio</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">E<span>·</span></span><span>EXHAUST <b>SPECTRUM</b> STUDIO</span></div>
+    <span class="privacy"><span aria-hidden="true">●</span> Browser-local analysis</span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">FSAE EXHAUST / DESIGN EXPLORER</p>
+        <h1 id="page-title">Tune the low end.<br><em>Keep the flow.</em></h1>
+        <p class="hero-copy">Compare a measured frequency map with a packed muffler and two adjustable side-branch resonators. Use the result to choose a prototype, then verify it on the car.</p>
+      </div>
+      <div class="target-card" aria-label="Observed sound levels and target">
+        <span class="card-kicker">MEASURED AT 0.5 M · 45°</span>
+        <div class="target-row"><span>Untaped cone</span><strong>120 <small>dBC</small></strong></div>
+        <div class="target-row"><span>Half-outlet taped</span><strong>115 <small>dBC</small></strong></div>
+        <div class="target-row target-goal"><span>Design target</span><strong>110 <small>dBC</small></strong></div>
+        <p>Measured sound levels are observations. The spectrum model below does not calculate dBC.</p>
+      </div>
+    </section>
+
+    <section class="notice" aria-label="Model scope">
+      <span class="notice-icon" aria-hidden="true">i</span>
+      <div><strong>Scenario model, not a sound-level prediction</strong><p>The curves use relative export dB. Helmholtz losses use an idealized side-branch model; cone, perforation, and packing effects are an empirical approximation. Gas flow, engine coupling, and backpressure are not simulated.</p></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="spectrum-title">
+      <div class="section-head"><div><p class="kicker">SPECTRUM</p><h2 id="spectrum-title">Input and modeled outlet</h2></div><span class="section-aside">Frequency on a logarithmic axis · levels in relative dB</span></div>
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div class="legend" aria-hidden="true"><span><i class="legend-line input-line"></i>Input</span><span><i class="legend-line output-line"></i>Modeled outlet</span></div>
+          <label>View <select id="view-range"><option value="low">1–250 Hz</option><option value="mid" selected>20–2,000 Hz</option><option value="full">Full spectrum</option></select></label>
+        </div>
+        <svg id="spectrum-chart" viewBox="0 0 900 360" role="img" aria-label="Input and modeled outlet spectrum chart"></svg>
+        <p id="chart-hover" class="chart-hover" aria-live="polite">Move across the chart to inspect a frequency.</p>
+      </div>
+      <div class="readouts" aria-live="polite">
+        <div><span>Resonator A</span><strong id="a-readout">—</strong></div>
+        <div><span>Resonator B</span><strong id="b-readout">—</strong></div>
+        <div><span>At probe frequency</span><strong id="probe-readout">—</strong></div>
+      </div>
+    </section>
+
+    <section class="workspace" aria-labelledby="input-title">
+      <div class="section-head"><div><p class="kicker">SOURCE</p><h2 id="input-title">Choose a frequency map</h2></div><span class="section-aside">Audacity TSV, CSV, or two numeric columns</span></div>
+      <div class="source-panel">
+        <div class="source-grid">
+          <label>Starting spectrum
+            <select id="preset">
+              <option value="straight">Straight pipe export</option>
+              <option value="free">Free Panda muffler export</option>
+              <option value="cone">Cone muffler export</option>
+              <option value="taped">Half-outlet taped cone export</option>
+              <option value="custom">Custom pasted or uploaded map</option>
+            </select>
+          </label>
+          <label>Input stage
+            <select id="stage">
+              <option value="before">Before packed muffler: model packing + cones + resonators</option>
+              <option value="after">After current muffler: model resonators only</option>
+            </select>
+          </label>
+          <label>Probe frequency, Hz
+            <input id="probe" type="number" min="1" max="24000" step="1" value="94">
+          </label>
+        </div>
+        <details>
+          <summary>Paste or upload your own spectrum</summary>
+          <div class="import-area">
+            <label for="spectrum-input">Frequency (Hz), level (dB)</label>
+            <textarea id="spectrum-input" rows="7" spellcheck="false" placeholder="Frequency (Hz)  Level (dB)&#10;50  -30.2&#10;100  -32.5&#10;200  -35.1"></textarea>
+            <div class="actions"><button id="apply-spectrum" class="primary" type="button">Apply pasted map</button><label class="file-button secondary">Choose .txt or .csv<input id="spectrum-file" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv"></label><button id="download-csv" class="secondary" type="button">Download modeled CSV</button></div>
+            <p id="input-status" class="status" role="status">Files are parsed in your browser and are not uploaded.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="workspace" aria-labelledby="geometry-title">
+      <div class="section-head"><div><p class="kicker">GEOMETRY</p><h2 id="geometry-title">Packed muffler and cones</h2></div><span class="section-aside">Defaults use your 49 mm pipe, 127 mm housing ID, and 520 mm length</span></div>
+      <div class="control-panel"><div id="main-controls" class="control-grid"></div></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="resonators-title">
+      <div class="section-head"><div><p class="kicker">LOW FREQUENCY</p><h2 id="resonators-title">Side-branch resonators</h2></div><span class="section-aside">Cavities are sealed; the 49 mm main passage remains open</span></div>
+      <div class="resonator-grid">
+        <div class="control-panel"><div class="resonator-head"><h3>Resonator A</h3><label class="switch"><input id="a-enabled" type="checkbox" checked>Include</label></div><div id="a-controls" class="control-grid"></div></div>
+        <div class="control-panel"><div class="resonator-head"><h3>Resonator B</h3><label class="switch"><input id="b-enabled" type="checkbox">Include</label></div><div id="b-controls" class="control-grid"></div></div>
+      </div>
+    </section>
+
+    <section class="workspace methods" aria-labelledby="methods-title">
+      <div class="section-head"><div><p class="kicker">MODEL NOTES</p><h2 id="methods-title">What the curves mean</h2></div></div>
+      <div class="method-grid">
+        <article><h3>Helmholtz frequency</h3><p><code>f₀ = c/(2π) √[Aₙ/(V Lₑ)]</code></p><p>Cavity volume, neck area, and effective neck length set the center frequency. The loss-Q control changes the estimated depth and width. Installed tuning changes with hot gas and flow.</p></article>
+        <article><h3>Packed cone response</h3><p><code>S(x) = πD(x)²/4</code> &nbsp; <code>Z(x) = ρc/S(x)</code></p><p>A perforated cone has no single resonance equation. The site uses your free-muffler versus straight-pipe exports for the high-frequency baseline, then applies a small geometry and coupling modifier.</p></article>
+        <article><h3>What to test next</h3><p>Compare output spectra and dBC at the same RPM, load, meter position, and settings. Check pressure before the muffler: a sealed, flush side branch avoids a deliberate steady-flow restriction, but its junction and reflected pulses can affect the engine.</p></article>
+      </div>
+      <details class="equations"><summary>Show the loss equations and assumptions</summary><div><p><code>Aₙ = πdₙ²/4</code>, <code>V = πDᵢ²Lᵥ/4</code>, <code>Lₑ = Lₙ + 0.85dₙ</code>. The site subtracts a simplified side-branch transmission loss: <code>TL = 10 log₁₀{[(R + Z₀/2)² + X²]/[R² + X²]}</code>, where <code>R = ω₀(Lₑ/Aₙ)/Q</code>, <code>X = ωLₑ/Aₙ − c²/(ωV)</code>, <code>Z₀ = c/Aₚ</code>, and <code>ω = 2πf</code>. Each branch is capped at 24 dB in the display.</p><p>For the packed section, the free-muffler versus straight-pipe octave differences set a frequency-dependent baseline. Packing depth, perforation open area and hole size scale that baseline. The cone contribution is an additional bounded trend centered on <code>fᶜ = c/(2πLcone)</code>. These scaling terms are design heuristics; they have not been fitted to measured cone modifications.</p></div></details>
+      <p class="source-links">Model references: <a href="https://mae.osu.edu/sites/default/files/2021-12/J67.pdf" target="_blank" rel="noopener">exhaust resonator study</a> · <a href="https://ntrs.nasa.gov/api/citations/19930083819/downloads/19930083819.pdf" target="_blank" rel="noopener">NACA side-branch analysis</a> · <a href="https://saemobilus.sae.org/papers/a-basic-study-acoustic-response-non-symmetric-perforated-duct-mufflers-2011-37-0023" target="_blank" rel="noopener">perforated-duct study</a>.</p>
+    </section>
+  </main>
+  <footer><span>EXHAUST SPECTRUM STUDIO</span><span>Local calculations · prototype decisions require measured validation</span></footer>
+</body>
+</html>
