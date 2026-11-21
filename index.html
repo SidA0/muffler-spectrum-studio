@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b151b">
-  <meta name="description" content="Explore how packed muffler geometry and tuned side branches might change an exhaust spectrum. Browser-local engineering scenario tool.">
-  <title>Exhaust Spectrum Studio</title>
+  <meta name="description" content="Analyze measured exhaust FFT data and explore how packing, cones, and side-branch resonators might change its spectrum. Browser-local engineering tool.">
+  <title>Scenario model | Exhaust Spectrum Studio</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="data.js"></script>
   <script defer src="app.js"></script>
@@ -16,11 +16,12 @@
     <div class="brand"><span class="mark">E<span>·</span></span><span>EXHAUST <b>SPECTRUM</b> STUDIO</span></div>
     <nav aria-label="Collection"><a class="studio-home" href="https://sida0.github.io/frame-order-studio/tools.html">All tools</a><span class="privacy"><span aria-hidden="true">●</span> Browser-local analysis</span></nav>
   </header>
+  <nav class="workspace-nav" aria-label="Spectrum workspaces"><a href="analysis/">01 / Measured analysis</a><a href="index.html" aria-current="page">02 / Scenario model</a></nav>
 
   <main>
     <section class="hero" aria-labelledby="page-title">
       <div>
-        <p class="eyebrow">FSAE EXHAUST / DESIGN EXPLORER</p>
+        <p class="eyebrow">FSAE EXHAUST / SCENARIO MODEL</p>
         <h1 id="page-title">Tune the low end.<br><em>Keep the flow.</em></h1>
         <p class="hero-copy">Compare a measured frequency map with a packed muffler and two adjustable side-branch resonators. Use the result to choose a prototype, then verify it on the car.</p>
       </div>
@@ -40,6 +41,7 @@
 
     <section class="workspace" aria-labelledby="spectrum-title">
       <div class="section-head"><div><p class="kicker">SPECTRUM</p><h2 id="spectrum-title">Input and modeled outlet</h2></div><span class="section-aside">Frequency on a logarithmic axis · levels in relative dB</span></div>
+      <p id="transfer-note" class="transfer-note" role="status" hidden></p>
       <div class="chart-panel">
         <div class="chart-toolbar">
           <div class="legend" aria-hidden="true"><span><i class="legend-line input-line"></i>Input</span><span><i class="legend-line output-line"></i>Modeled outlet</span></div>

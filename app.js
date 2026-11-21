@@ -127,14 +127,14 @@
     const x=f=>L+(Math.log(f)-Math.log(minX))/(Math.log(maxX)-Math.log(minX))*W;
     const y=db=>B-(db-yMin)/(yMax-yMin)*H;
     const xTicks=mode==='low'?(mobile?[1,5,20,100,200]:[1,2,5,10,20,50,100,200]):mode==='mid'?(mobile?[20,100,500,2000]:[20,50,100,200,500,1000,2000]):(mobile?[50,200,1000,5000,20000]:[50,100,200,500,1000,2000,5000,10000,20000]);
-    for(let v=yMin;v<=yMax;v+=5){const yy=y(v);chart.append(svg('line',{x1:L,y1:yy,x2:R,y2:yy,stroke:'#e5ebef'}));const t=svg('text',{x:L-10,y:yy+4,'text-anchor':'end',fill:'#78899a','font-size':12});t.textContent=String(v);chart.append(t);}
-    for(const f of xTicks.filter(f=>f>=minX&&f<=maxX)){const xx=x(f);chart.append(svg('line',{x1:xx,y1:T,x2:xx,y2:B,stroke:'#eef2f5'}));const t=svg('text',{x:xx,y:B+22,'text-anchor':'middle',fill:'#78899a','font-size':12});t.textContent=f>=1000?(f/1000)+'k':String(f);chart.append(t);}
-    chart.append(svg('line',{x1:L,y1:B,x2:R,y2:B,stroke:'#aab7c3'}));
-    for(const [column,color] of [[1,'#8d9db0'],[2,'#e27646']]) {
+    for(let v=yMin;v<=yMax;v+=5){const yy=y(v);chart.append(svg('line',{x1:L,y1:yy,x2:R,y2:yy,stroke:'#314851'}));const t=svg('text',{x:L-10,y:yy+4,'text-anchor':'end',fill:'#a4b6bc','font-size':12});t.textContent=String(v);chart.append(t);}
+    for(const f of xTicks.filter(f=>f>=minX&&f<=maxX)){const xx=x(f);chart.append(svg('line',{x1:xx,y1:T,x2:xx,y2:B,stroke:'#314851'}));const t=svg('text',{x:xx,y:B+22,'text-anchor':'middle',fill:'#a4b6bc','font-size':12});t.textContent=f>=1000?(f/1000)+'k':String(f);chart.append(t);}
+    chart.append(svg('line',{x1:L,y1:B,x2:R,y2:B,stroke:'#718e96'}));
+    for(const [column,color] of [[1,'#9fc1c4'],[2,'#e7a16a']]) {
       const points=visible.map(r=>x(r[0]).toFixed(2)+','+y(r[column]).toFixed(2)).join(' ');
       chart.append(svg('polyline',{points,fill:'none',stroke:color,'stroke-width':column===2?2.7:2,'stroke-linejoin':'round','stroke-linecap':'round'}));
     }
-    const cursor=svg('line',{x1:L,y1:T,x2:L,y2:B,stroke:'#28415d','stroke-width':1,'stroke-dasharray':'4 4',visibility:'hidden'});chart.append(cursor);
+    const cursor=svg('line',{x1:L,y1:T,x2:L,y2:B,stroke:'#e7a16a','stroke-width':1,'stroke-dasharray':'4 4',visibility:'hidden'});chart.append(cursor);
     chartGeometry={minX,maxX,L,R,cursor,svgWidth};
   }
   function update() {
@@ -159,5 +159,21 @@
   $('spectrum-chart').addEventListener('pointermove',event=>{if(!chartGeometry)return;const rect=event.currentTarget.getBoundingClientRect();const {minX,maxX,L,R,cursor,svgWidth}=chartGeometry;const xx=(event.clientX-rect.left)*svgWidth/rect.width;const f=Math.exp(Math.log(minX)+(Math.max(L,Math.min(R,xx))-L)/(R-L)*(Math.log(maxX)-Math.log(minX)));const db=inputAt(f);if(db===null)return;const m=modelAt(f,db,state());cursor.setAttribute('x1',Math.max(L,Math.min(R,xx)));cursor.setAttribute('x2',Math.max(L,Math.min(R,xx)));cursor.setAttribute('visibility','visible');$('chart-hover').textContent=`${f.toFixed(0)} Hz · input ${db.toFixed(1)} dB · modeled ${m.output.toFixed(1)} dB · estimated change ${(-m.pack-m.cone-m.a-m.b).toFixed(1)} dB`;});
   $('spectrum-chart').addEventListener('pointerleave',()=>{chartGeometry?.cursor.setAttribute('visibility','hidden');$('chart-hover').textContent='Move across the chart to inspect a frequency.';});
   window.addEventListener('resize',update);
-  update();
+  function loadAnalysisSpectrum() {
+    if (new URLSearchParams(location.search).get('from') !== 'analysis') return false;
+    try {
+      const transfer = JSON.parse(sessionStorage.getItem('ess-spectrum-transfer-v1') || 'null');
+      if (transfer?.version !== 1 || !Array.isArray(transfer.bins) || transfer.bins.length < 2 || !transfer.bins.every(row => Array.isArray(row) && row.length === 2 && Number.isFinite(row[0]) && row[0] > 0 && Number.isFinite(row[1]))) return false;
+      $('spectrum-input').value = ['Frequency Hz,Relative C-weighted dB', ...transfer.bins.map(row => row.join(','))].join('\n');
+      $('stage').value = 'after';
+      $('preset').value = 'custom';
+      $('view-range').value = 'full';
+      $('transfer-note').textContent = `Loaded the ${Number(transfer.rpm).toLocaleString()} RPM C-weighted bin shape from Measured analysis, normalized to a 0 dB peak. Select whether this measurement was before or after the current muffler under Input stage. The modeled curve is a relative scenario, not a predicted dBC.`;
+      $('transfer-note').hidden = false;
+      $('spectrum-input').closest('details').open = true;
+      applyMap();
+      return true;
+    } catch { return false; }
+  }
+  if (!loadAnalysisSpectrum()) update();
 })();

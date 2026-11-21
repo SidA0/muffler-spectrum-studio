@@ -189,3 +189,9 @@ footer { background: #0e1b23; color: var(--muted); border-top: 1px solid var(--l
   html { scroll-behavior: auto; }
   .upload-card, .drop-zone, .drop, .export-grid article, .primary { transition: none; }
 }
+.workspace-nav { display: flex; align-items: stretch; gap: 28px; min-height: 52px; padding: 0 max(4vw, 24px); background: #0e1b23; border-bottom: 1px solid var(--line); }
+.workspace-nav a { display: flex; align-items: center; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 700; transition: color .2s; }
+.workspace-nav a:hover { color: var(--ink); }
+.workspace-nav a[aria-current] { color: var(--orange); border-bottom-color: var(--orange); }
+.transfer-note { margin: 0 0 18px; padding: 13px 17px; border-left: 3px solid var(--orange); background: #243039; color: #d7e4e1; font-size: 14px; line-height: 1.5; }
+@media (max-width: 640px) { .workspace-nav { gap: 20px; padding: 0 18px; } .workspace-nav a { font-size: 12px; } }

@@ -1,6 +1,12 @@
 # Exhaust Spectrum Studio
 
-A static, browser-local FSAE exhaust design explorer. Open `index.html` directly or use the GitHub Pages site. No build step or server-side processing is required.
+A browser-local FSAE exhaust workbench with two connected modes. The root `index.html` is the scenario model; `analysis/` is the measured FFT/RPM analysis. GitHub Pages serves both from this repository. No server-side processing is required.
+
+## Measured analysis and handoff
+
+Use **Measured analysis** to import `.xlsx`, `.xls`, `.csv`, or `.tsv` FFT data; choose its RPM/frequency/SPL layout and weighting; inspect RPM versus dBC, the 3D surface, and leading 300 Hz bands; apply or optimize attenuation; and export CSV or Ansys inputs. Its source and tests live in `analysis-app/`. Run `npm ci`, `npm test`, and `npm run build:site` there. That build syncs the generated page into `analysis/` for GitHub Pages, using relative asset paths.
+
+The **Use this spectrum in the model** button takes the selected RPM's C-weighted bin levels, subtracts the highest bin level, and sends the relative shape through browser session storage to `index.html`. The transfer does not send the uploaded file to a server. The model starts with **After current muffler** to avoid applying packing loss twice by default; choose the actual measurement stage before interpreting the curve. The model output is a relative design scenario, not a predicted outlet dBC. The measured analysis requires calibrated source SPL for its dBC results.
 
 ## What it includes
 
@@ -29,4 +35,4 @@ Use the site to compare candidate dimensions and identify a frequency to prototy
 - [NACA side-branch analysis](https://ntrs.nasa.gov/api/citations/19930083819/downloads/19930083819.pdf)
 - [Perforated-duct muffler study, SAE](https://saemobilus.sae.org/papers/a-basic-study-acoustic-response-non-symmetric-perforated-duct-mufflers-2011-37-0023)
 
-The source files `index.html`, `styles.css`, `app.js`, and `data.js` are sufficient to host the site on any static web host.
+The scenario-model files `index.html`, `styles.css`, `studio-theme.css`, `app.js`, and `data.js` plus the built `analysis/` directory are sufficient to host the combined site on a static web host.
