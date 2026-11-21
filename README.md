@@ -1,12 +1,14 @@
 # Exhaust Spectrum Studio
 
-A browser-local FSAE exhaust workbench with two connected modes. The root `index.html` is the scenario model; `analysis/` is the measured FFT/RPM analysis. GitHub Pages serves both from this repository. No server-side processing is required.
+A browser-local FSAE exhaust workbench with three modes. The root `index.html` is the scenario model; `analysis/` is the measured FFT/RPM analysis; `resonator-tuning-lab.html` explores quarter-wave and Helmholtz geometry. GitHub Pages serves all three from this repository. No server-side processing is required.
 
 ## Measured analysis and handoff
 
 Use **Measured analysis** to import `.xlsx`, `.xls`, `.csv`, or `.tsv` FFT data; choose its RPM/frequency/SPL layout and weighting; inspect RPM versus dBC, the 3D surface, and leading 300 Hz bands; apply or optimize attenuation; and export CSV or Ansys inputs. Its source and tests live in `analysis-app/`. Run `npm ci`, `npm test`, and `npm run build:site` there. That build syncs the generated page into `analysis/` for GitHub Pages, using relative asset paths.
 
 The **Use this spectrum in the model** button takes the selected RPM's C-weighted bin levels, subtracts the highest bin level, and sends the relative shape through browser session storage to `index.html`. The transfer does not send the uploaded file to a server. The model starts with **After current muffler** to avoid applying packing loss twice by default; choose the actual measurement stage before interpreting the curve. The model output is a relative design scenario, not a predicted outlet dBC. The measured analysis requires calibrated source SPL for its dBC results.
+
+`resonator-tuning-lab.html` is a separate, self-contained HTML calculator for a 375 Hz quarter-wave branch, 20–50 Hz Helmholtz geometry sweep, separate-branch transmission loss, and a shared-neck chamber comparison. It has no external dependencies and can be opened directly as a file.
 
 ## What it includes
 
