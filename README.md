@@ -8,7 +8,7 @@ Use **Measured analysis** to import `.xlsx`, `.xls`, `.csv`, or `.tsv` FFT data;
 
 The **Use this spectrum in the model** button takes the selected RPM's C-weighted bin levels, subtracts the highest bin level, and sends the relative shape through browser session storage to `index.html`. The transfer does not send the uploaded file to a server. The model starts with **After current muffler** to avoid applying packing loss twice by default; choose the actual measurement stage before interpreting the curve. The model output is a relative design scenario, not a predicted outlet dBC. The measured analysis requires calibrated source SPL for its dBC results.
 
-`resonator-tuning-lab.html` is a separate, self-contained HTML calculator for a 375 Hz quarter-wave branch, 20–50 Hz Helmholtz geometry sweep, separate-branch transmission loss, and a shared-neck chamber comparison. It has no external dependencies and can be opened directly as a file.
+`resonator-tuning-lab.html` is a separate, self-contained HTML calculator for a 375 Hz quarter-wave branch, 20–50 Hz Helmholtz geometry sweep, separate-branch transmission loss, and a shared-neck chamber comparison. Its live side view treats the tube and cavity as external to the muffler, with schematic tee routing and dimension-scaled branches. It has no external dependencies and can be opened directly as a file.
 
 ## What it includes
 
